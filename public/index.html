@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>申万一级行业三个月趋势看板</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">SW level-1 industry trend</p>
+          <h1>申万一级行业三个月趋势看板</h1>
+        </div>
+        <div class="controls">
+          <button id="refreshButton" type="button">刷新</button>
+          <label>
+            <span>自动刷新</span>
+            <select id="refreshInterval">
+              <option value="60000" selected>1 分钟</option>
+              <option value="300000">5 分钟</option>
+              <option value="600000">10 分钟</option>
+              <option value="1800000">30 分钟</option>
+              <option value="0">关闭</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="summary">
+        <div>
+          <span>领涨</span>
+          <strong id="leader">--</strong>
+        </div>
+        <div>
+          <span>领跌</span>
+          <strong id="laggard">--</strong>
+        </div>
+        <div>
+          <span>平均三个月</span>
+          <strong id="average">--</strong>
+        </div>
+        <div>
+          <span>上涨家数</span>
+          <strong id="breadth">--</strong>
+        </div>
+        <div>
+          <span>统计区间</span>
+          <strong id="period">--</strong>
+        </div>
+        <div>
+          <span>页面刷新</span>
+          <strong id="updatedAt">--</strong>
+        </div>
+      </section>
+
+      <section class="focus-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">selected industry overlay</p>
+            <h2>重点行业趋势对比</h2>
+          </div>
+          <div class="focus-actions">
+            <button id="selectLeadersButton" type="button">选领涨</button>
+            <button id="clearFocusButton" type="button">清空</button>
+          </div>
+        </div>
+        <div class="focus-chart-wrap">
+          <svg id="focusChart" class="focus-chart" viewBox="0 0 960 360" role="img" aria-label="重点行业三个月趋势对比"></svg>
+        </div>
+        <div id="focusLegend" class="focus-legend"></div>
+        <div id="industryPicker" class="industry-picker" aria-label="选择重点行业"></div>
+      </section>
+
+      <section class="board" id="board" aria-live="polite"></section>
+
+      <section class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>排名</th>
+              <th>行业</th>
+              <th>代码</th>
+              <th>最新收盘</th>
+              <th>最近日涨跌</th>
+              <th>三个月涨跌</th>
+              <th>最大回撤</th>
+              <th>年化波动</th>
+              <th>最新交易日</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </section>
+
+      <p class="footnote" id="source">数据源加载中。</p>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
