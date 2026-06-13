@@ -14,8 +14,13 @@ await mkdir(apiDir, { recursive: true });
 
 const payload = await fetchDashboard({ useCache: false });
 const validRows = payload.data.filter((row) => !row.error);
+const failedRows = payload.data.filter((row) => row.error);
 
 if (validRows.length < 31 || !payload.startDate || !payload.latestTradingDate) {
+  console.error("Static build data fetch failed:");
+  for (const row of failedRows) {
+    console.error(`- ${row.code} ${row.name}: ${row.error}`);
+  }
   throw new Error(`Static build failed: only ${validRows.length}/31 industries have valid data`);
 }
 
