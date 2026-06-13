@@ -268,12 +268,13 @@ function renderError(error) {
 }
 
 async function loadData() {
+  const refreshedAt = Date.now();
+  updatedAt.textContent = formatTime(refreshedAt);
   refreshButton.disabled = true;
   refreshButton.textContent = "刷新中";
   try {
     const response = await fetchDashboardData();
     const payload = await response.json();
-    const refreshedAt = Date.now();
     const rows = payload.data
       .filter((row) => !row.error)
       .sort((a, b) => (b.changePct ?? -Infinity) - (a.changePct ?? -Infinity));
@@ -296,9 +297,10 @@ async function fetchDashboardData() {
 
   for (const endpoint of endpoints) {
     try {
-      const response = await fetch(endpoint, { cache: "no-store" });
+      const url = endpoint.includes(".json") ? `${endpoint}?t=${Date.now()}` : endpoint;
+      const response = await fetch(url, { cache: "no-store" });
       if (response.ok) return response;
-      lastError = new Error(`${endpoint} HTTP ${response.status}`);
+      lastError = new Error(`${url} HTTP ${response.status}`);
     } catch (error) {
       lastError = error;
     }
