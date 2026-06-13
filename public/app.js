@@ -185,7 +185,7 @@ function renderFocus(rows) {
   renderIndustryPicker(rows);
 }
 
-function renderSummary(rows, payload) {
+function renderSummary(rows, payload, refreshedAt = Date.now()) {
   const validRows = rows.filter((row) => Number.isFinite(row.changePct));
   const sorted = [...validRows].sort((a, b) => b.changePct - a.changePct);
   const avg = validRows.reduce((sum, row) => sum + row.changePct, 0) / validRows.length;
@@ -199,7 +199,7 @@ function renderSummary(rows, payload) {
   average.className = toneClass(avg);
   period.textContent = `${formatDate(payload.startDate)} - ${formatDate(payload.latestTradingDate)}`;
   breadth.textContent = `${winners}/${validRows.length}`;
-  updatedAt.textContent = formatTime(payload.asOf);
+  updatedAt.textContent = formatTime(refreshedAt);
   source.textContent = `${payload.note || payload.source || ""} 行情缓存更新：${formatTime(payload.dataFetchedAt || payload.asOf)}。`;
 }
 
@@ -272,10 +272,11 @@ async function loadData() {
   try {
     const response = await fetchDashboardData();
     const payload = await response.json();
+    const refreshedAt = Date.now();
     const rows = payload.data
       .filter((row) => !row.error)
       .sort((a, b) => (b.changePct ?? -Infinity) - (a.changePct ?? -Infinity));
-    renderSummary(rows, payload);
+    renderSummary(rows, payload, refreshedAt);
     latestRows = rows;
     renderFocus(rows);
     renderBoard(rows);
