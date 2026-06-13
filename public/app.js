@@ -200,7 +200,8 @@ function renderSummary(rows, payload, refreshedAt = Date.now()) {
   period.textContent = `${formatDate(payload.startDate)} - ${formatDate(payload.latestTradingDate)}`;
   breadth.textContent = `${winners}/${validRows.length}`;
   updatedAt.textContent = formatTime(refreshedAt);
-  source.textContent = `${payload.note || payload.source || ""} 行情缓存更新：${formatTime(payload.dataFetchedAt || payload.asOf)}。`;
+  const staleNote = payload.dataFetchError ? ` ${payload.dataFetchError}` : "";
+  source.textContent = `${payload.note || payload.source || ""} 行情缓存更新：${formatTime(payload.dataFetchedAt || payload.asOf)}。${staleNote}`;
 }
 
 function renderBoard(rows) {
