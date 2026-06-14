@@ -16,7 +16,7 @@ const selectLeadersButton = document.querySelector("#selectLeadersButton");
 const clearFocusButton = document.querySelector("#clearFocusButton");
 
 let timer = null;
-let clockTimer = null;
+let isLoading = false;
 let latestRows = [];
 let selectedCodes = new Set(["801770", "801730", "801080", "801780"]);
 const lineColors = ["#35c987", "#65c7d7", "#e2b654", "#ff7f6e", "#b68cff", "#f06fa9"];
@@ -205,10 +205,6 @@ function renderSummary(rows, payload, refreshedAt = Date.now()) {
   source.textContent = `${payload.note || payload.source || ""} 行情缓存更新：${formatTime(payload.dataFetchedAt || payload.asOf)}。${staleNote}`;
 }
 
-function renderPageClock() {
-  updatedAt.textContent = formatTime(Date.now());
-}
-
 function renderBoard(rows) {
   const maxMove = Math.max(1, ...rows.map((row) => Math.abs(row.changePct || 0)));
   board.innerHTML = rows
@@ -273,7 +269,8 @@ function renderError(error) {
 }
 
 async function loadData() {
-  renderPageClock();
+  if (isLoading) return;
+  isLoading = true;
   refreshButton.disabled = true;
   refreshButton.textContent = "刷新中";
   try {
@@ -291,6 +288,7 @@ async function loadData() {
   } catch (error) {
     renderError(error);
   } finally {
+    isLoading = false;
     refreshButton.disabled = false;
     refreshButton.textContent = "刷新";
   }
@@ -320,12 +318,6 @@ function schedule() {
   if (interval > 0) timer = setInterval(loadData, interval);
 }
 
-function schedulePageClock() {
-  renderPageClock();
-  if (clockTimer) clearInterval(clockTimer);
-  clockTimer = setInterval(renderPageClock, 1000);
-}
-
 refreshButton.addEventListener("click", loadData);
 refreshInterval.addEventListener("change", schedule);
 industryPicker.addEventListener("click", (event) => {
@@ -348,6 +340,5 @@ clearFocusButton.addEventListener("click", () => {
   renderFocus(latestRows);
 });
 
-schedulePageClock();
 schedule();
 loadData();
